@@ -16,9 +16,13 @@ export default function App() {
 
   //dispatch thunk, and get initial data
   useEffect(() => {
-    dispatch(initDataThunk());
     dispatch(initUserThunk());
   }, []);
+
+  //init data
+  useEffect(() => {
+    if (user && !loading) dispatch(initDataThunk());
+  }, [user, loading]);
 
   if (loading) return <div>loading...</div>;
 
