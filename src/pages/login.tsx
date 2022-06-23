@@ -22,7 +22,6 @@ const Login = () => {
 
   const onSubmit = (data: ILogin) => {
     axios.post(`${process.env.REACT_APP_API_URL}/login`, data).then((res) => {
-      console.log({ res });
       if (res.status === 200) dispatch(updateUserThunk(res.data.token));
     });
   };
