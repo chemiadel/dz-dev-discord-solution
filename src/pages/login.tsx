@@ -37,7 +37,7 @@ const Login = () => {
         {/*Form */}
         <div
           id="login-form"
-          className="w-4/3 sm:w-2/3 md:w-2/3 xl:w-2/4 bg-white flex flex-col justify-center space-y-8 py-10 px-10  h-96 shadow-xl rounded-xl m-auto z-50"
+          className="sm:w-3/3 md:w-2/3 xl:w-2/4 bg-white flex flex-col justify-center space-y-8 py-10 px-10  h-96 shadow-xl rounded-xl m-auto z-50"
         >
           <div className="w-full flex flex-col space-y-6">
             {/*Email */}

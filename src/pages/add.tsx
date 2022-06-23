@@ -16,7 +16,12 @@ const Add = () => {
 
   //handling validation and submittion
   function onSubmit(data: IData) {
-    dispatch(addData(data));
+    dispatch(
+      addData({
+        ...data,
+        id: new Date().getMilliseconds(),
+      })
+    );
     navigate("/main");
   }
 
