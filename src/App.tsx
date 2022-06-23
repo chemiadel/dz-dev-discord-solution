@@ -1,15 +1,16 @@
-import { useEffect, lazy } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { initUserThunk } from "./store/reducers/user.reducer";
 import { initDataThunk, RootState } from "./store";
 
 const Main = lazy(() => import("./pages/main"));
 const Add = lazy(() => import("./pages/add"));
 const Edit = lazy(() => import("./pages/edit"));
+const Login = lazy(() => import("./pages/login"));
 
 export default function App() {
-  const user = useSelector((state: RootState) => state.userState);
+  const { user, loading } = useSelector((state: RootState) => state.userState);
 
   const dispatch = useDispatch();
 
@@ -19,11 +20,26 @@ export default function App() {
     dispatch(initUserThunk());
   }, []);
 
+  if (loading) return <div>loading...</div>;
+
+  if (!loading && !user)
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Navigate to={`/login`} />} />
+        </Routes>
+      </Suspense>
+    );
+
   return (
-    <Routes>
-      <Route path="/" element={<Main />} />
-      <Route path="/user/add" element={<Add />} />
-      <Route path="/user/:id/edit" element={<Edit />} />
-    </Routes>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/add" element={<Add />} />
+        <Route path="/edit/:id" element={<Edit />} />
+        <Route path="*" element={<Navigate to={`/`} />} />
+      </Routes>
+    </Suspense>
   );
 }

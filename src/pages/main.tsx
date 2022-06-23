@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { deleteData, initDataThunk } from "../store/reducers";
+import { deleteData, initDataThunk, resetUserThunk } from "../store/reducers";
 import { RootState } from "../store";
 
 interface IUser {
@@ -16,6 +16,7 @@ const Main = () => {
   const [selected, setSelected] = useState<number>(0);
   const [sort, setSort] = useState<boolean>();
   const data = useSelector((state: RootState) => state.dataState.data);
+  const dispatch = useDispatch();
 
   //open delete modal and change selected id
   function handleDelete(id: number) {
@@ -26,9 +27,9 @@ const Main = () => {
   return (
     <div className="flex flex-col space-y-6 p-4 border-2 rounded-md">
       {/**Header */}
-      <div className="flex flex-row items-center">
+      <div className="flex flex-row items-center space-x-2">
         <h1 className="text-3xl font-bold flex-grow">Dashboard</h1>
-        <Link to={`/user/add`}>
+        <Link to={`/add`}>
           <button
             onClick={() => {}}
             className="rounded-md bg-blue-500 text-white font-bold p-2"
@@ -36,6 +37,14 @@ const Main = () => {
             Add User
           </button>
         </Link>
+        <button
+          onClick={() => {
+            dispatch(resetUserThunk());
+          }}
+          className="rounded-md border-2 border-red-500 text-red-500 font-bold p-2"
+        >
+          Logout
+        </button>
       </div>
       <hr />
       {/**Table */}
@@ -66,7 +75,7 @@ const Main = () => {
               <td>{user.username}</td>
               <td>{user.email}</td>
               <td>
-                <Link to={`/user/${user.id}/edit`}>
+                <Link to={`/edit/${user.id}`}>
                   <button className="rounded-md w-full bg-yellow-500 text-white font-bold p-2">
                     Edit
                   </button>

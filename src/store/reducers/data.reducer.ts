@@ -1,7 +1,7 @@
 import { createSlice, Dispatch } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface IData {
+export interface IData {
   id: number;
   name: string;
   username: string;
@@ -31,8 +31,10 @@ export const dataSlice = createSlice({
     addData: (state, { payload }) => {
       state.data?.push(payload);
     },
-    editData: (state, { payload }) => {
-      if (state.data) state.data[payload.index] = payload.data;
+    editData: (state, { payload }: { payload: IData }) => {
+      const index = state.data?.findIndex((row) => row.id === payload.id);
+
+      if (state.data && typeof index === "number") state.data[index] = payload;
     },
     deleteData: (state, { payload }) => {
       if (state.data?.length)

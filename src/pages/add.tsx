@@ -1,39 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { addData } from "../store";
+import { addData, IData } from "../store";
 
 const Add = () => {
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-
-  const [nameError, setNameError] = useState<string>("");
-  const [emailError, setEmailError] = useState<string>("");
-
-  //reset error onChange
-  useEffect(() => {
-    setNameError("");
-    setEmailError("");
-  }, [name, email]);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<IData>();
 
   //handling validation and submittion
-  function handleSubmit(e: React.SyntheticEvent) {
-    e.preventDefault();
-
-    //validate email
-
-    //validate name
-
-    //validate
-    const payload = {
-      name,
-      email,
-    };
-
-    dispatch(addData(payload));
+  function onSubmit(data: IData) {
+    dispatch(addData(data));
     navigate("/main");
   }
 
@@ -61,26 +44,55 @@ const Add = () => {
       </div>
       <hr />
       {/**From */}
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col space-y-2"
+      >
         <div className="flex flex-col space-y-2">
           <label>Name</label>
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            {...register("name", {
+              required: {
+                message: "Field required",
+                value: true,
+              },
+            })}
             className="p-2 outline-none border-2 rounded-md focus:ring-4"
             placeholder="Name"
           />
-          <label className="text-red-500">{nameError}</label>
+          <label className="text-red-500">{errors.name?.message}</label>
         </div>
         <div className="flex flex-col space-y-2">
           <label>Email</label>
           <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register("email", {
+              required: {
+                message: "Field required",
+                value: true,
+              },
+              pattern: {
+                message: "Invalide Email Address",
+                value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,5}$/,
+              },
+            })}
             className="p-2 outline-none border-2 rounded-md focus:ring-4"
             placeholder="Email"
           />
-          <label className="text-red-500">{emailError}</label>
+          <label className="text-red-500">{errors.email?.message}</label>
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label>Username</label>
+          <input
+            {...register("username", {
+              required: {
+                message: "Field required",
+                value: true,
+              },
+            })}
+            className="p-2 outline-none border-2 rounded-md focus:ring-4"
+            placeholder="Email"
+          />
+          <label className="text-red-500">{errors.username?.message}</label>
         </div>
         <div className="flex flex-row items-center justify-end space-x-2">
           <Link to="/">

@@ -1,46 +1,37 @@
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import { RootState, editData } from "../store";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { addData, editData, IData, RootState } from "../store";
 
 const Edit = () => {
-  const user = useSelector((state: RootState) => state.userState);
+  const { data, loading } = useSelector((state: RootState) => state.dataState);
+  const params = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm<IData>();
 
-  const { id } = useParams();
-
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-
-  const [nameError, setNameError] = useState<string>("");
-  const [emailError, setEmailError] = useState<string>("");
-
-  useEffect(() => {}, [user, id]);
-
-  //reset error onChange
   useEffect(() => {
-    setNameError("");
-    setEmailError("");
-  }, [name, email]);
+    if (params.id && data) {
+      const findUser = data.filter((item) => item.id.toString() === params.id);
+
+      //if no user found redirect to main
+      if (findUser.length === 0) navigate("/");
+
+      reset(findUser[0]);
+    }
+  }, [data, params]);
 
   //handling validation and submittion
-  function handleSubmit(e: React.SyntheticEvent) {
-    e.preventDefault();
-
-    const payload = {
-      data: {
-        name,
-        email,
-      },
-      index: id,
-    };
-
-    dispatch(editData(payload));
+  function onSubmit(data: IData) {
+    dispatch(editData(data));
+    navigate("/main");
   }
-
-  if (user.loading) return null;
 
   return (
     <div className="flex flex-col space-y-6 p-4 border-2 rounded-md">
@@ -62,30 +53,59 @@ const Edit = () => {
             />
           </svg>
         </Link>
-        <h1 className="text-3xl font-bold flex-grow">Edit User</h1>
+        <h1 className="text-3xl font-bold flex-grow">Add User</h1>
       </div>
       <hr />
       {/**From */}
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col space-y-2"
+      >
         <div className="flex flex-col space-y-2">
           <label>Name</label>
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            {...register("name", {
+              required: {
+                message: "Field required",
+                value: true,
+              },
+            })}
             className="p-2 outline-none border-2 rounded-md focus:ring-4"
             placeholder="Name"
           />
-          <label className="text-red-500">{nameError}</label>
+          <label className="text-red-500">{errors.name?.message}</label>
         </div>
         <div className="flex flex-col space-y-2">
           <label>Email</label>
           <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register("email", {
+              required: {
+                message: "Field required",
+                value: true,
+              },
+              pattern: {
+                message: "Invalide Email Address",
+                value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,5}$/,
+              },
+            })}
             className="p-2 outline-none border-2 rounded-md focus:ring-4"
             placeholder="Email"
           />
-          <label className="text-red-500">{emailError}</label>
+          <label className="text-red-500">{errors.email?.message}</label>
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label>Username</label>
+          <input
+            {...register("username", {
+              required: {
+                message: "Field required",
+                value: true,
+              },
+            })}
+            className="p-2 outline-none border-2 rounded-md focus:ring-4"
+            placeholder="Email"
+          />
+          <label className="text-red-500">{errors.username?.message}</label>
         </div>
         <div className="flex flex-row items-center justify-end space-x-2">
           <Link to="/">

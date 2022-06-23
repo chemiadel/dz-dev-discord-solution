@@ -69,6 +69,8 @@ export const updateUserThunk = (token: string) => (dispatch: Dispatch) => {
 };
 
 export const resetUserThunk = () => (dispatch: Dispatch) => {
+  localStorage.removeItem("token");
+
   dispatch(resetUser());
 };
 
