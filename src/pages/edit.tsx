@@ -53,7 +53,7 @@ const Edit = () => {
             />
           </svg>
         </Link>
-        <h1 className="text-3xl font-bold flex-grow">Add User</h1>
+        <h1 className="text-3xl font-bold flex-grow">Edit User</h1>
       </div>
       <hr />
       {/**From */}
